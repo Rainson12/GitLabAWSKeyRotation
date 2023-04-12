@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>03f176c8-a6fc-4ec7-b643-cc163a012038</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GitLabAWSKeyRotation.Application\GitLabAWSKeyRotation.Application.csproj" />
+    <ProjectReference Include="..\GitLabAWSKeyRotation.Contracts\GitLabAWSKeyRotation.Contracts.csproj" />
+    <ProjectReference Include="..\GitLabAWSKeyRotation.Domain\GitLabAWSKeyRotation.Domain.csproj" />
+    <ProjectReference Include="..\GitLabAWSKeyRotation.Infrastructure\GitLabAWSKeyRotation.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
