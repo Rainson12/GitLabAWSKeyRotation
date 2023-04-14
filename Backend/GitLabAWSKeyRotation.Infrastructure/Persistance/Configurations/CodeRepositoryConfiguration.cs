@@ -1,7 +1,12 @@
 ﻿using GitLabAWSKeyRotation.Domain.GitLab;
-using GitLabAWSKeyRotation.Domain.GitLab.ValueObjects;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GitLabAWSKeyRotation.Domain.GitLab.ValueObjects;
 
 namespace GitLabAWSKeyRotation.Infrastructure.Persistance.Configurations
 {
@@ -17,7 +22,8 @@ namespace GitLabAWSKeyRotation.Infrastructure.Persistance.Configurations
                     .IsRequired();
 
             builder.Property(m => m.Url);
-            builder.OwnsOne(m => m.AccessKey);
+            builder.Property(m => m.Name);
+
         }
     }
 }

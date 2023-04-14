@@ -1,4 +1,5 @@
 ﻿using GitLabAWSKeyRotation.Domain.AWS;
+using GitLabAWSKeyRotation.Domain.AWS.Entities;
 using GitLabAWSKeyRotation.Domain.GitLab;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ namespace GitLabAWSKeyRotation.Infrastructure.Persistance
         }
 
         public DbSet<Account> Accounts { get; set; } = null!;
-        public DbSet<CodeRepository> CodeRepositories { get; set; } = null!;
+        public DbSet<AccessToken> GitlabAccessTokens { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

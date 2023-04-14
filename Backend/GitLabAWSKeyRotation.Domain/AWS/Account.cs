@@ -19,7 +19,6 @@ namespace GitLabAWSKeyRotation.Domain.AWS
 
         public void AddIdentity(IAM identity)
         {
-            
             _iamIdentities.Add(identity);
         }
 

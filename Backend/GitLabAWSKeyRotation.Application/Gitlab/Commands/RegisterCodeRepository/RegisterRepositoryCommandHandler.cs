@@ -4,35 +4,36 @@ using GitLabAWSKeyRotation.Application.Common.Interfaces.Persistance;
 using GitLabAWSKeyRotation.Domain.GitLab.ValueObjects;
 using GitLabApiClient.Models.Projects.Responses;
 using GitLabApiClient;
+using GitLabAWSKeyRotation.Domain.GitLab;
 
 namespace GitLabAWSKeyRotation.Application.Gitlab.Commands.RegisterRotation
 {
     public class RegisterRepositoryCommandHandler : IRequestHandler<RegisterRepositoryCommand, ErrorOr<Domain.GitLab.CodeRepository>>
     {
-        private readonly ICodeRepositoryRepository _codeRepositoryRepository;
+        private readonly IGitlabAccessTokenRepository _accessTokenRepository;
 
-        public RegisterRepositoryCommandHandler(ICodeRepositoryRepository codeRepositoryRepository)
+        public RegisterRepositoryCommandHandler(IGitlabAccessTokenRepository accessTokenRepository)
         {
-            _codeRepositoryRepository = codeRepositoryRepository;
+            _accessTokenRepository = accessTokenRepository;
         }
 
         public async Task<ErrorOr<Domain.GitLab.CodeRepository>> Handle(RegisterRepositoryCommand command, CancellationToken cancellationToken)
         {
-            if (_codeRepositoryRepository.ExistsByUrl(command.url))
-                return Domain.Common.Errors.Gitlab.AlreadyRegistered;
+            if (_accessTokenRepository.Get(command.accessTokenId) is not AccessToken token)
+                return Domain.Common.Errors.Gitlab.RepositoryDoesNotExist;
 
             Uri gitlabRepoWebUrl = new Uri(command.url);
             var gitlabRootUrl = gitlabRepoWebUrl.GetLeftPart(UriPartial.Authority);
-            var gitlabClient = new GitLabClient(gitlabRootUrl, command.token);
+            var gitlabClient = new GitLabClient(gitlabRootUrl, token.Token);
             var allProjects = await gitlabClient.Projects.GetAsync();
             if (allProjects.SingleOrDefault(x => x.WebUrl == command.url) is not Project project)
             {
-                return Domain.Common.Errors.Gitlab.DoesNotExist;
+                return Domain.Common.Errors.Gitlab.RepositoryDoesNotExist;
             }
 
-            var accessKey = AccessKey.Create(command.identifier, command.token);
-            var codeRepo = Domain.GitLab.CodeRepository.Create(command.url, accessKey);
-            _codeRepositoryRepository.Add(codeRepo);
+            var codeRepo = Domain.GitLab.CodeRepository.Create(command.url, command.name);
+            token.AddCodeRepository(codeRepo);
+            _accessTokenRepository.Update(token);
 
             return codeRepo;
         }

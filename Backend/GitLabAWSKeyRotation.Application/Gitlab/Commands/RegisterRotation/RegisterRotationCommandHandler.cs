@@ -10,19 +10,22 @@ namespace GitLabAWSKeyRotation.Application.Gitlab.Commands.RegisterRotation
 {
     public class RegisterRotationCommandHandler : IRequestHandler<RegisterRotationCommand, ErrorOr<Domain.GitLab.Rotation>>
     {
-        private readonly ICodeRepositoryRepository _codeRepositoryRepository;
+        private readonly IGitlabAccessTokenRepository _accessTokenRepository;
         private readonly IAccountsRepository _accountsRepository;
 
-        public RegisterRotationCommandHandler(ICodeRepositoryRepository codeRepositoryRepository, IAccountsRepository accountsRepository)
+        public RegisterRotationCommandHandler(IGitlabAccessTokenRepository accessTokenRepository, IAccountsRepository accountsRepository)
         {
-            _codeRepositoryRepository = codeRepositoryRepository;
+            _accessTokenRepository = accessTokenRepository;
             _accountsRepository = accountsRepository;
         }
 
         public async Task<ErrorOr<Domain.GitLab.Rotation>> Handle(RegisterRotationCommand command, CancellationToken cancellationToken)
         {
-            if (_codeRepositoryRepository.Get(command.CodeRepositoryId) is not Domain.GitLab.CodeRepository _codeRepo)
-                return Domain.Common.Errors.Rotation.DoesNotExist;
+            if (_accessTokenRepository.Get(command.accessTokenId) is not Domain.GitLab.AccessToken _accessToken)
+                return Domain.Common.Errors.Gitlab.AccessTokenDoesNotExist;
+
+            if (_accessToken.CodeRepositories.FirstOrDefault(x => x.Id.Value == command.CodeRepositoryId) is not Domain.GitLab.CodeRepository _codeRepo)
+                return Domain.Common.Errors.Gitlab.RepositoryDoesNotExist;
 
             var rotation = Domain.GitLab.Rotation.Create(command.environment, command.accessKeyIdVariableName, command.accessSecretVariableName, _codeRepo.Id);
 
@@ -34,11 +37,11 @@ namespace GitLabAWSKeyRotation.Application.Gitlab.Commands.RegisterRotation
 
             Uri gitlabRepoWebUrl = new Uri(_codeRepo.Url);
             var gitlabRootUrl = gitlabRepoWebUrl.GetLeftPart(UriPartial.Authority);
-            var gitlabClient = new GitLabClient(gitlabRootUrl, _codeRepo.AccessKey.Token);
+            var gitlabClient = new GitLabClient(gitlabRootUrl, _accessToken.Token);
             var allProjects = await gitlabClient.Projects.GetAsync();
             if(allProjects.SingleOrDefault(x => x.WebUrl == _codeRepo.Url) is not Project project)
             {
-                return Domain.Common.Errors.Gitlab.DoesNotExist;
+                return Domain.Common.Errors.Gitlab.RepositoryDoesNotExist;
             }
 
             var projectVariables = await gitlabClient.Projects.GetVariablesAsync(project.Id);

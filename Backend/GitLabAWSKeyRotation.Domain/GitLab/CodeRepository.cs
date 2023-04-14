@@ -3,20 +3,20 @@ using GitLabAWSKeyRotation.Domain.GitLab.ValueObjects;
 
 namespace GitLabAWSKeyRotation.Domain.GitLab
 {
-    public sealed class CodeRepository : AggregateRoot<CodeRepositoryId>
+    public sealed class CodeRepository : Entity<CodeRepositoryId>
     {
-        public CodeRepository(CodeRepositoryId id, string url, AccessKey accessKey) : base(id)
+        public CodeRepository(CodeRepositoryId id, string url, string name) : base(id)
         {
             Url = url;
-            AccessKey = accessKey;
+            Name = name;
         }
 
         public string Url { get; private set; }
-        public AccessKey AccessKey { get; private set; }
+        public string Name { get; private set; }
 
-        public static CodeRepository Create(string url, AccessKey accessKey)
+        public static CodeRepository Create(string url, string name)
         {
-            return new(CodeRepositoryId.CreateUnique(), url, accessKey);
+            return new(CodeRepositoryId.CreateUnique(), url, name);
         }
 
         #pragma warning disable CS8618

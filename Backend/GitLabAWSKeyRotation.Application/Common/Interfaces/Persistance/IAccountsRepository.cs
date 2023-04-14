@@ -1,4 +1,5 @@
 ﻿using GitLabAWSKeyRotation.Domain.AWS;
+using GitLabAWSKeyRotation.Domain.AWS.Entities;
 
 namespace GitLabAWSKeyRotation.Application.Common.Interfaces.Persistance
 {

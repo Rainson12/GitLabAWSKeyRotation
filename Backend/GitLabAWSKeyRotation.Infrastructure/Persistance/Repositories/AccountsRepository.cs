@@ -1,5 +1,6 @@
 ﻿using GitLabAWSKeyRotation.Application.Common.Interfaces.Persistance;
 using GitLabAWSKeyRotation.Domain.AWS;
+using GitLabAWSKeyRotation.Domain.AWS.Entities;
 using GitLabAWSKeyRotation.Domain.AWS.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 

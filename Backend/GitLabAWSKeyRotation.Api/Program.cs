@@ -13,7 +13,7 @@ namespace GitLabAWSKeyRotation.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddInfrastructure();
+            builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddApplication();
 
             builder.Services.AddControllers();
@@ -30,7 +30,11 @@ namespace GitLabAWSKeyRotation.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors(x => x
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials()
+               .SetIsOriginAllowed(hostName => true));
             //app.UseExceptionHandler("/error");
             app.UseHttpsRedirection();
 

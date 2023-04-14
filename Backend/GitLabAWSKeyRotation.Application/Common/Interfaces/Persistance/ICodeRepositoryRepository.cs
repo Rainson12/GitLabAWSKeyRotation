@@ -2,13 +2,14 @@
 
 namespace GitLabAWSKeyRotation.Application.Common.Interfaces.Persistance
 {
-    public  interface ICodeRepositoryRepository
+    public  interface IGitlabAccessTokenRepository
     {
-        bool Exists(Guid repositoryId);
-        bool ExistsByUrl(string url);
-        CodeRepository? Get(Guid repositoryId);
-        Task<List<CodeRepository>> GetAll();
-        CodeRepository Update(CodeRepository account);
-        void Add(CodeRepository account);
+        bool ExistsByName(string name);
+        bool Exists(Guid accessTokenId);
+        AccessToken? Get(Guid accessTokenId);
+        AccessToken? GetByTokenOrName(string token, string name);
+        Task<List<AccessToken>> GetAll();
+        AccessToken Update(AccessToken accessToken);
+        void Add(AccessToken accessToken);
     }
 }

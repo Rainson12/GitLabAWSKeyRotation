@@ -38,11 +38,37 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                     b.ToTable("AWSAccounts", (string)null);
                 });
 
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.AccessToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("AccessTokenId");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TokenName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GitlabAccessTokens");
+                });
+
             modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.CodeRepository", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)")
                         .HasColumnName("CodeRepositoryId");
+
+                    b.Property<Guid>("AccessTokenId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -50,7 +76,9 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CodeRepositories");
+                    b.HasIndex("AccessTokenId");
+
+                    b.ToTable("CodeRepository");
                 });
 
             modelBuilder.Entity("GitLabAWSKeyRotation.Domain.AWS.Account", b =>
@@ -142,29 +170,16 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
 
             modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.CodeRepository", b =>
                 {
-                    b.OwnsOne("GitLabAWSKeyRotation.Domain.GitLab.ValueObjects.AccessKey", "AccessKey", b1 =>
-                        {
-                            b1.Property<Guid>("CodeRepositoryId")
-                                .HasColumnType("char(36)");
-
-                            b1.Property<string>("Identifier")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
-                            b1.Property<string>("Token")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("CodeRepositoryId");
-
-                            b1.ToTable("CodeRepositories");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CodeRepositoryId");
-                        });
-
-                    b.Navigation("AccessKey")
+                    b.HasOne("GitLabAWSKeyRotation.Domain.GitLab.AccessToken", null)
+                        .WithMany("CodeRepositories")
+                        .HasForeignKey("AccessTokenId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.AccessToken", b =>
+                {
+                    b.Navigation("CodeRepositories");
                 });
 #pragma warning restore 612, 618
         }

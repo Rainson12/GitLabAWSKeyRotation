@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -30,20 +31,18 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CodeRepositories",
+                name: "GitlabAccessTokens",
                 columns: table => new
                 {
-                    CodeRepositoryId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Url = table.Column<string>(type: "longtext", nullable: false)
+                    AccessTokenId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    TokenName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    AccessKey_Identifier = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    AccessKey_Token = table.Column<string>(type: "longtext", nullable: false)
+                    Token = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CodeRepositories", x => x.CodeRepositoryId);
+                    table.PrimaryKey("PK_GitlabAccessTokens", x => x.AccessTokenId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -76,6 +75,29 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "CodeRepository",
+                columns: table => new
+                {
+                    CodeRepositoryId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Url = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AccessTokenId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CodeRepository", x => x.CodeRepositoryId);
+                    table.ForeignKey(
+                        name: "FK_CodeRepository_GitlabAccessTokens_AccessTokenId",
+                        column: x => x.AccessTokenId,
+                        principalTable: "GitlabAccessTokens",
+                        principalColumn: "AccessTokenId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "RotationDependentRepositoryVariables",
                 columns: table => new
                 {
@@ -99,9 +121,9 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                         principalColumn: "IamId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RotationDependentRepositoryVariables_CodeRepositories_CodeRe~",
+                        name: "FK_RotationDependentRepositoryVariables_CodeRepository_CodeRepo~",
                         column: x => x.CodeRepositoryId,
-                        principalTable: "CodeRepositories",
+                        principalTable: "CodeRepository",
                         principalColumn: "CodeRepositoryId",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -111,6 +133,11 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                 name: "IX_AWSIAMs_AWSAccountId",
                 table: "AWSIAMs",
                 column: "AWSAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CodeRepository_AccessTokenId",
+                table: "CodeRepository",
+                column: "AccessTokenId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RotationDependentRepositoryVariables_CodeRepositoryId",
@@ -133,10 +160,13 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                 name: "AWSIAMs");
 
             migrationBuilder.DropTable(
-                name: "CodeRepositories");
+                name: "CodeRepository");
 
             migrationBuilder.DropTable(
                 name: "AWSAccounts");
+
+            migrationBuilder.DropTable(
+                name: "GitlabAccessTokens");
         }
     }
 }
