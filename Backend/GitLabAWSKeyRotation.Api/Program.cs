@@ -35,14 +35,10 @@ namespace GitLabAWSKeyRotation.Api
                .AllowAnyHeader()
                .AllowCredentials()
                .SetIsOriginAllowed(hostName => true));
-            //app.UseExceptionHandler("/error");
             app.UseHttpsRedirection();
-
-            //app.UseAuthorization();
-
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
-
             app.Run();
         }
     }

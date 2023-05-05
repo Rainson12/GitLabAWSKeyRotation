@@ -19,7 +19,7 @@ namespace GitLabAWSKeyRotation.Api.Controllers
 
         [HttpPost]
         [Route("Account/Register")]
-        public async Task<Microsoft.AspNetCore.Mvc.IActionResult> RegisterAccount(Contracts.AWS.Account.RegisterAccountRequest request)
+        public async Task<IActionResult> RegisterAccount(Contracts.AWS.Account.RegisterAccountRequest request)
         {
             var command = new RegisterAccountCommand(request.displayName, request.accountId);
             var response = await _mediator.Send(command);
@@ -32,7 +32,7 @@ namespace GitLabAWSKeyRotation.Api.Controllers
 
         [HttpGet]
         [Route("Accounts")]
-        public async Task<Microsoft.AspNetCore.Mvc.IActionResult> GetAccounts()
+        public async Task<IActionResult> GetAccounts()
         {
             var command = new AccountsQuery();
             var response = await _mediator.Send(command);
@@ -46,7 +46,7 @@ namespace GitLabAWSKeyRotation.Api.Controllers
 
         [HttpPost]
         [Route("IAM/Register")]
-        public async Task<Microsoft.AspNetCore.Mvc.IActionResult> RegisterIAM(RegisterIamRequest request)
+        public async Task<IActionResult> RegisterIAM(RegisterIamRequest request)
         {
             var command = new RegisterIamCommand(request.accountId, request.name, request.accessKeyId, request.accessSecret, request.rotationInDays);
             var response = await _mediator.Send(command);

@@ -3,6 +3,7 @@ using System;
 using GitLabAWSKeyRotation.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitLabAWSKeyRotation.Infrastructure.Migrations
 {
     [DbContext(typeof(GitLabAWSKeyRotationDbContext))]
-    partial class GitLabAWSKeyRotationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230505143442_AddAuthentication")]
+    partial class AddAuthentication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

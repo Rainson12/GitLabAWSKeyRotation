@@ -13,6 +13,7 @@ namespace GitLabAWSKeyRotation.Infrastructure.Persistance
 
         public DbSet<Account> Accounts { get; set; } = null!;
         public DbSet<AccessToken> GitlabAccessTokens { get; set; } = null!;
+        public DbSet<Domain.Application.Application> Applications { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
