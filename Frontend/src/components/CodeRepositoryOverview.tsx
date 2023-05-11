@@ -5,7 +5,7 @@ import React from 'react';
 import { Container, Menu, MenuItem, Typography } from '@mui/material';
 import BackendApi from '../services/Api';
 import { guid } from '../Models/Common/Guid';
-import { useApplicationStore } from '../stores/application';
+import { useApplicationStore } from '../stores/Application';
 
 const columns = [
     {
@@ -32,7 +32,7 @@ function CodeRepositoryOverview() {
     const handleContextMenu = (event: React.MouseEvent) => {
         event.preventDefault();
         const codeRepositoryIdGuid = guid(event.currentTarget.getAttribute('data-id')?.toString() ?? "");
-        const codeRepository = selectedAccessToken.codeRepositories?.find((x) => x.id.value == codeRepositoryIdGuid);
+        const codeRepository = selectedAccessToken.codeRepositories?.find((x: any) => x.id.value == codeRepositoryIdGuid);
         setCodeRepository(codeRepository);
         setContextMenu(contextMenu === null ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 } : null);
     };
@@ -56,7 +56,7 @@ function CodeRepositoryOverview() {
             setCodeRepository(undefined);
         } else {
             const codeRepositoryIdGuid = guid(newSelection[0] as string);
-            const codeRepository = selectedAccessToken.codeRepositories?.find((x) => x.id.value == codeRepositoryIdGuid);
+            const codeRepository = selectedAccessToken.codeRepositories?.find((x: any) => x.id.value == codeRepositoryIdGuid);
             setCodeRepository(codeRepository);
         }
     };

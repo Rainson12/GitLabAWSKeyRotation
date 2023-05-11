@@ -4,7 +4,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import React from 'react';
 import { Container, Menu, MenuItem, Typography } from '@mui/material';
 import BackendApi from '../services/Api';
-import { useApplicationStore } from '../stores/application';
+import { useApplicationStore } from '../stores/Application';
 import { guid } from '../Models/Common/Guid';
 
 const columns = [

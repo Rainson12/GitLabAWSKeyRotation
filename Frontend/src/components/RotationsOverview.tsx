@@ -4,7 +4,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import React from 'react';
 import { Container, Menu, MenuItem, Typography } from '@mui/material';
 import BackendApi from '../services/Api';
-import { useApplicationStore } from '../stores/application';
+import { useApplicationStore } from '../stores/Application';
 import { guid } from '../Models/Common/Guid';
 
 function RotationsOverview() {
@@ -12,7 +12,7 @@ function RotationsOverview() {
         {
             field: 'codeRepositoryName',
             headerName: 'Code Repository Name',
-            valueGetter: (value: any) => value.row.codeRepositoryId?.value && codeRepositories.find((x) => x.id.value === value.row.codeRepositoryId.value)?.name,
+            valueGetter: (value: any) => value.row.codeRepositoryId?.value && codeRepositories.find((x: any) => x.id.value === value.row.codeRepositoryId.value)?.name,
             flex: 1,
         },
         {

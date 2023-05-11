@@ -5,7 +5,7 @@ import React from 'react';
 import { Container, Menu, MenuItem, Typography } from '@mui/material';
 import BackendApi from '../services/Api';
 import { guid } from '../Models/Common/Guid';
-import { useApplicationStore } from '../stores/application';
+import { useApplicationStore } from '../stores/Application';
 
 const columns = [
     {
