@@ -70,8 +70,11 @@ function RotationsOverview() {
                         <DataGrid
                             autoHeight
                             sx={{
-                                '&.MuiDataGrid-root .MuiDataGrid-cell:focus-within': {
-                                    outline: 'none !important',
+                                '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
+                                    outline: 'none',
+                                },
+                                '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                    outline: 'none',
                                 },
                             }}
                             columns={columns}

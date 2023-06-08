@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Box, { BoxProps } from '@mui/material/Box';
 import React from 'react';
-import { Container, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Container, Menu, MenuItem, Typography } from '@mui/material';
 import BackendApi from '../services/Api';
 import { guid } from '../Models/Common/Guid';
 import { useApplicationStore } from '../stores/Application';
+import { NewGitlabAccessTokenDialog } from './modals/NewGitlabAccessTokenDialog';
 
 const columns = [
     {
@@ -25,6 +26,7 @@ function GitlabAccessKeysOverview() {
         mouseY: number;
     } | null>(null);
 
+    const [addNewDialogOpen, setAddNewDialogOpen] = React.useState<boolean>(false);
     const selectedAccessToken = useApplicationStore((state) => state.selectedAccessToken);
     const gitlabAccessTokens = useApplicationStore((state) => state.gitlabAccessTokens);
     const setSelectedAccessCode = useApplicationStore((state) => state.setSelectedAccessCode);
@@ -42,17 +44,21 @@ function GitlabAccessKeysOverview() {
         setContextMenu(contextMenu === null ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 } : null);
     };
 
-    const handleClose = () => {
+    const handleContextMenuClose = () => {
         setContextMenu(null);
     };
     const editItem = () => {
         console.log('edit selected:' + selectedAccessToken);
-        handleClose();
+        handleContextMenuClose();
     };
 
     const deleteItem = () => {
         console.log('delete selected:' + selectedAccessToken);
-        handleClose();
+        handleContextMenuClose();
+    };
+
+    const toggleNewGitlabAccessTokenDialog = () => {
+        setAddNewDialogOpen(!addNewDialogOpen);
     };
 
     const onRowSelectionModelChange = (newSelection: any) => {
@@ -70,14 +76,20 @@ function GitlabAccessKeysOverview() {
             <Typography variant="h6" gutterBottom>
                 Gitlab Access Tokens
             </Typography>
+            <Button variant="contained" sx={{ marginBottom: 1 }}  onClick={toggleNewGitlabAccessTokenDialog}>Add Access Token</Button>
+            <NewGitlabAccessTokenDialog open={addNewDialogOpen} handleClose={toggleNewGitlabAccessTokenDialog} />
             {gitlabAccessTokens != undefined && (
                 <Box>
+                    
                     <DataGrid
                         rowSelectionModel={selectedAccessToken ? [selectedAccessToken.id.value.toString()] : []}
                         autoHeight
                         sx={{
-                            '&.MuiDataGrid-root .MuiDataGrid-cell:focus-within': {
-                                outline: 'none !important',
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
+                                outline: 'none',
+                            },
+                            '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none',
                             },
                         }}
                         columns={columns}
@@ -93,14 +105,14 @@ function GitlabAccessKeysOverview() {
                     />
                     <Menu
                         open={contextMenu !== null}
-                        onClose={handleClose}
+                        onClose={handleContextMenuClose}
                         anchorReference="anchorPosition"
                         anchorPosition={contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
                         slotProps={{
                             root: {
                                 onContextMenu: (e) => {
                                     e.preventDefault();
-                                    handleClose();
+                                    handleContextMenuClose();
                                 },
                             },
                         }}

@@ -34,7 +34,7 @@ function AwsAccountOverview() {
 
     const handleContextMenu = (event: React.MouseEvent) => {
         event.preventDefault();
-        const accountIdGuid = guid(event.currentTarget.getAttribute('data-id')?.toString() ?? "");
+        const accountIdGuid = guid(event.currentTarget.getAttribute('data-id')?.toString() ?? '');
         const account = accounts?.find((x) => x.id.value == accountIdGuid);
         setSelectedAccount(account);
         setContextMenu(contextMenu === null ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 } : null);
@@ -45,12 +45,12 @@ function AwsAccountOverview() {
     };
 
     const editItem = () => {
-        console.log('edit selected:' + selectedAccount)
+        console.log('edit selected:' + selectedAccount);
         handleClose();
     };
 
     const deleteItem = () => {
-        console.log('delete selected:' + selectedAccount)
+        console.log('delete selected:' + selectedAccount);
         handleClose();
     };
 
@@ -75,8 +75,11 @@ function AwsAccountOverview() {
                         rowSelectionModel={selectedAccount ? [selectedAccount.id.value.toString()] : []}
                         autoHeight
                         sx={{
-                            '&.MuiDataGrid-root .MuiDataGrid-cell:focus-within': {
-                                outline: 'none !important',
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
+                                outline: 'none',
+                            },
+                            '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none',
                             },
                         }}
                         columns={columns}
