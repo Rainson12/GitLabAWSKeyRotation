@@ -26,11 +26,19 @@ class Api {
         const response = await axios.get(`${this.BASE_URL}/Gitlab/AccessTokens`);
         return response.data;
     }
-    async AddGitlabAccessToken(name: string, token: string, scanRepos: boolean): Promise<Array<any>> {
+    async AddGitlabAccessToken(name: string, token: string): Promise<Array<any>> {
         const response = await axios.post(`${this.BASE_URL}/Gitlab/AccessToken/Register`, {
             name: name,
             token: token,
-            scanRepos: scanRepos,
+        });
+        return response.data;
+    }
+
+    async ScanGitlab(name: string, token: string, rotationIntervalInDays: number): Promise<Array<any>> {
+        const response = await axios.post(`${this.BASE_URL}/Gitlab/AccessToken/Scan`, {
+            name,
+            token,
+            rotationIntervalInDays,
         });
         return response.data;
     }

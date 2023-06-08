@@ -57,7 +57,15 @@ function GitlabAccessKeysOverview() {
         handleContextMenuClose();
     };
 
+    const scanRepo = async () => {
+        console.log('scanning:' + selectedAccessToken);
+        await BackendApi.ScanGitlab(selectedAccessToken.tokenName, selectedAccessToken.token, 90);
+        handleContextMenuClose();
+    };
+
+
     const toggleNewGitlabAccessTokenDialog = () => {
+        fetchGitlabAccessTokens();
         setAddNewDialogOpen(!addNewDialogOpen);
     };
 
@@ -117,6 +125,7 @@ function GitlabAccessKeysOverview() {
                             },
                         }}
                     >
+                        <MenuItem onClick={scanRepo}>Scan</MenuItem>
                         <MenuItem onClick={editItem}>Edit</MenuItem>
                         <MenuItem onClick={deleteItem}>Delete</MenuItem>
                     </Menu>

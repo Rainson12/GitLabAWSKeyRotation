@@ -15,16 +15,10 @@ export function NewGitlabAccessTokenDialog(props: NewGitlabAccessTokenDialogProp
     const [error, setError] = useState('');
 
     const handleSave = async () => {
-        if (
-            accessTokenInput.current?.value !== undefined &&
-            accessTokenInput.current?.value !== '' &&
-            nameInput.current?.value !== undefined &&
-            nameInput.current?.value !== '' &&
-            scanInput.current?.value !== undefined &&
-            scanInput.current?.value !== ''
-        ) {
+        if (accessTokenInput.current?.value !== undefined && accessTokenInput.current?.value !== '' && nameInput.current?.value !== undefined && nameInput.current?.value !== '') {
             try {
-                await BackendApi.AddGitlabAccessToken(nameInput.current.value, accessTokenInput.current.value, scanInput.current.checked);
+                await BackendApi.AddGitlabAccessToken(nameInput.current.value, accessTokenInput.current.value);
+                props.handleClose();
             } catch (error) {
                 if (axios.isAxiosError(error)) {
                     setError(error.response?.data.title ?? error.message);
@@ -43,7 +37,6 @@ export function NewGitlabAccessTokenDialog(props: NewGitlabAccessTokenDialogProp
                 <DialogContentText>Enter the gitlab access token. The access token should have permission to access and change variables of the projects.</DialogContentText>
                 <TextField autoFocus margin="dense" id="name" label="Name" inputRef={nameInput} type="text" fullWidth variant="standard" />
                 <TextField margin="dense" id="accessToken" label="Access Token" inputRef={accessTokenInput} type="text" fullWidth variant="standard" error={Boolean(error)} helperText={error} />
-                <FormControlLabel control={<Checkbox inputRef={scanInput} />} label="Scan for AWS connected Repositories?" />
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.handleClose}>Cancel</Button>

@@ -29,8 +29,6 @@ namespace GitLabAWSKeyRotation.Application.Gitlab.Commands.RegisterRotation
             Uri gitlabRepoWebUrl = new Uri(gitlabUrl);
             var gitlabRootUrl = gitlabRepoWebUrl.GetLeftPart(UriPartial.Authority);
             var gitlabClient = new GitLabClient(gitlabRootUrl, command.token);
-            var allProjects = await gitlabClient.Projects.GetAsync();
-
             var codeRepo = Domain.GitLab.AccessToken.Create(command.name, command.token);
             _accessTokenRepository.Add(codeRepo);
 
