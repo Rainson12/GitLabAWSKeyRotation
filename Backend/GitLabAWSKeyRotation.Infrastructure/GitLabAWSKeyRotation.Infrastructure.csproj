@@ -21,8 +21,4 @@
     <ProjectReference Include="..\GitLabAWSKeyRotation.Domain\GitLabAWSKeyRotation.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

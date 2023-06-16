@@ -2,6 +2,7 @@
 using GitLabAWSKeyRotation.Domain.AWS;
 using GitLabAWSKeyRotation.Domain.AWS.Entities;
 using GitLabAWSKeyRotation.Domain.AWS.ValueObjects;
+using GitLabAWSKeyRotation.Domain.GitLab;
 using Microsoft.EntityFrameworkCore;
 
 namespace GitLabAWSKeyRotation.Infrastructure.Persistance.Repositories
@@ -36,10 +37,19 @@ namespace GitLabAWSKeyRotation.Infrastructure.Persistance.Repositories
 
         public Task<List<Account>> GetAll()
         {
-            return _dbContext.Accounts
-                .AsSplitQuery()
-                .Include(x => x.IamIdentities)
-                .ThenInclude(y => y.Rotations).ToListAsync();
+            return _dbContext.Accounts.ToListAsync();
+        }
+
+        public async Task<List<IAM>> GetIAMs(AccountId accountId)
+        {
+            var account = await _dbContext.Accounts.Include(x => x.IamIdentities).FirstOrDefaultAsync(x => x.Id == accountId);
+            return account?.IamIdentities.ToList() ?? new List<IAM>();
+        }
+
+        public async Task<List<Rotation>> GetRotations(IAMId iamId)
+        {
+            var iam = await _dbContext.IAMs.Include(x => x.Rotations).FirstOrDefaultAsync(x => x.Id == iamId);
+            return iam?.Rotations.ToList() ?? new List<Rotation>();
         }
 
         public Account? GetByUuid(Guid id)

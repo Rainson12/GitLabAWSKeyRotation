@@ -1,6 +1,7 @@
 ﻿using GitLabApiClient.Models.Oauth.Requests;
 using GitLabAWSKeyRotation.Application.Gilab.Queries;
 using GitLabAWSKeyRotation.Application.Gitlab.Commands.RegisterRotation;
+using GitLabAWSKeyRotation.Domain.GitLab.ValueObjects;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -75,6 +76,32 @@ namespace GitLabAWSKeyRotation.Api.Controllers
         public async Task<IActionResult> GetAccessTokens()
         {
             var command = new AccessTokensQuery();
+            var response = await _mediator.Send(command);
+
+            // Todo map responses
+            return response.Match(
+                response => Ok(response),
+                errors => Problem(errors));
+        }
+
+        [HttpGet]
+        [Route("AccessToken/{accessTokenId}/CodeRepositories")]
+        public async Task<IActionResult> GetCodeRepositories([FromRoute] Guid accessTokenId)
+        {
+            var command = new CodeRepositoriesQuery(AccessTokenId.Create(accessTokenId));
+            var response = await _mediator.Send(command);
+
+            // Todo map responses
+            return response.Match(
+                response => Ok(response),
+                errors => Problem(errors));
+        }
+
+        [HttpGet]
+        [Route("AccessToken/{accessTokenId}/CodeRepositories/{codeRepositoryId}")]
+        public async Task<IActionResult> GetRotations([FromRoute] Guid accessTokenId, [FromRoute] Guid codeRepositoryId)
+        {
+            var command = new RotationsQuery(CodeRepositoryId.Create(codeRepositoryId));
             var response = await _mediator.Send(command);
 
             // Todo map responses

@@ -6,12 +6,26 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GitLabAWSKeyRotation.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDatabase : Migration
+    public partial class Setup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Applications",
+                columns: table => new
+                {
+                    AccessTokenId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    AuthKey = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Applications", x => x.AccessTokenId);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -60,17 +74,16 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                     AccessSecret = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     KeyRotationInDays = table.Column<float>(type: "float", nullable: false),
-                    AWSAccountId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    AccountId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AWSIAMs", x => x.IamId);
                     table.ForeignKey(
-                        name: "FK_AWSIAMs_AWSAccounts_AWSAccountId",
-                        column: x => x.AWSAccountId,
+                        name: "FK_AWSIAMs_AWSAccounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "AWSAccounts",
-                        principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "AccountId");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -109,17 +122,16 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                     AccessSecretVariableName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CodeRepositoryId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    IamId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    IAMId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RotationDependentRepositoryVariables", x => x.RotationDependentRepositoryVariablesId);
                     table.ForeignKey(
-                        name: "FK_RotationDependentRepositoryVariables_AWSIAMs_IamId",
-                        column: x => x.IamId,
+                        name: "FK_RotationDependentRepositoryVariables_AWSIAMs_IAMId",
+                        column: x => x.IAMId,
                         principalTable: "AWSIAMs",
-                        principalColumn: "IamId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "IamId");
                     table.ForeignKey(
                         name: "FK_RotationDependentRepositoryVariables_CodeRepository_CodeRepo~",
                         column: x => x.CodeRepositoryId,
@@ -130,9 +142,9 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AWSIAMs_AWSAccountId",
+                name: "IX_AWSIAMs_AccountId",
                 table: "AWSIAMs",
-                column: "AWSAccountId");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CodeRepository_AccessTokenId",
@@ -145,14 +157,17 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                 column: "CodeRepositoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RotationDependentRepositoryVariables_IamId",
+                name: "IX_RotationDependentRepositoryVariables_IAMId",
                 table: "RotationDependentRepositoryVariables",
-                column: "IamId");
+                column: "IAMId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Applications");
+
             migrationBuilder.DropTable(
                 name: "RotationDependentRepositoryVariables");
 

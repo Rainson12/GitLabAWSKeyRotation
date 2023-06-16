@@ -38,6 +38,41 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                     b.ToTable("AWSAccounts", (string)null);
                 });
 
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.AWS.Entities.IAM", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("IamId");
+
+                    b.Property<string>("AccessKeyId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("AccessSecret")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid?>("AccountId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Arn")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<float>("KeyRotationInDays")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("AWSIAMs", (string)null);
+                });
+
             modelBuilder.Entity("GitLabAWSKeyRotation.Domain.Application.Application", b =>
                 {
                     b.Property<Guid>("Id")
@@ -96,91 +131,44 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                     b.ToTable("CodeRepository");
                 });
 
-            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.AWS.Account", b =>
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.Rotation", b =>
                 {
-                    b.OwnsMany("GitLabAWSKeyRotation.Domain.AWS.Entities.IAM", "IamIdentities", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("char(36)")
-                                .HasColumnName("IamId");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("RotationDependentRepositoryVariablesId");
 
-                            b1.Property<Guid>("AWSAccountId")
-                                .HasColumnType("char(36)");
+                    b.Property<string>("AccessKeyIdVariableName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                            b1.Property<string>("AccessKeyId")
-                                .IsRequired()
-                                .HasColumnType("longtext");
+                    b.Property<string>("AccessSecretVariableName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                            b1.Property<string>("AccessSecret")
-                                .IsRequired()
-                                .HasColumnType("longtext");
+                    b.Property<Guid>("CodeRepositoryId")
+                        .HasColumnType("char(36)");
 
-                            b1.Property<string>("Arn")
-                                .IsRequired()
-                                .HasColumnType("longtext");
+                    b.Property<string>("Environment")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                            b1.Property<float>("KeyRotationInDays")
-                                .HasColumnType("float");
+                    b.Property<Guid?>("IAMId")
+                        .HasColumnType("char(36)");
 
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("longtext");
+                    b.HasKey("Id");
 
-                            b1.HasKey("Id");
+                    b.HasIndex("CodeRepositoryId");
 
-                            b1.HasIndex("AWSAccountId");
+                    b.HasIndex("IAMId");
 
-                            b1.ToTable("AWSIAMs", (string)null);
+                    b.ToTable("RotationDependentRepositoryVariables", (string)null);
+                });
 
-                            b1.WithOwner()
-                                .HasForeignKey("AWSAccountId");
-
-                            b1.OwnsMany("GitLabAWSKeyRotation.Domain.GitLab.Rotation", "Rotations", b2 =>
-                                {
-                                    b2.Property<Guid>("Id")
-                                        .HasColumnType("char(36)")
-                                        .HasColumnName("RotationDependentRepositoryVariablesId");
-
-                                    b2.Property<string>("AccessKeyIdVariableName")
-                                        .IsRequired()
-                                        .HasColumnType("longtext");
-
-                                    b2.Property<string>("AccessSecretVariableName")
-                                        .IsRequired()
-                                        .HasColumnType("longtext");
-
-                                    b2.Property<Guid>("CodeRepositoryId")
-                                        .HasColumnType("char(36)");
-
-                                    b2.Property<string>("Environment")
-                                        .IsRequired()
-                                        .HasColumnType("longtext");
-
-                                    b2.Property<Guid?>("IamId")
-                                        .HasColumnType("char(36)");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CodeRepositoryId");
-
-                                    b2.HasIndex("IamId");
-
-                                    b2.ToTable("RotationDependentRepositoryVariables", (string)null);
-
-                                    b2.HasOne("GitLabAWSKeyRotation.Domain.GitLab.CodeRepository", null)
-                                        .WithMany()
-                                        .HasForeignKey("CodeRepositoryId")
-                                        .OnDelete(DeleteBehavior.Cascade)
-                                        .IsRequired();
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("IamId");
-                                });
-
-                            b1.Navigation("Rotations");
-                        });
-
-                    b.Navigation("IamIdentities");
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.AWS.Entities.IAM", b =>
+                {
+                    b.HasOne("GitLabAWSKeyRotation.Domain.AWS.Account", null)
+                        .WithMany("IamIdentities")
+                        .HasForeignKey("AccountId");
                 });
 
             modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.CodeRepository", b =>
@@ -190,6 +178,29 @@ namespace GitLabAWSKeyRotation.Infrastructure.Migrations
                         .HasForeignKey("AccessTokenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.Rotation", b =>
+                {
+                    b.HasOne("GitLabAWSKeyRotation.Domain.GitLab.CodeRepository", null)
+                        .WithMany()
+                        .HasForeignKey("CodeRepositoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GitLabAWSKeyRotation.Domain.AWS.Entities.IAM", null)
+                        .WithMany("Rotations")
+                        .HasForeignKey("IAMId");
+                });
+
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.AWS.Account", b =>
+                {
+                    b.Navigation("IamIdentities");
+                });
+
+            modelBuilder.Entity("GitLabAWSKeyRotation.Domain.AWS.Entities.IAM", b =>
+                {
+                    b.Navigation("Rotations");
                 });
 
             modelBuilder.Entity("GitLabAWSKeyRotation.Domain.GitLab.AccessToken", b =>

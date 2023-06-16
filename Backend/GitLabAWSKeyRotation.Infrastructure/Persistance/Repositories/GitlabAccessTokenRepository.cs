@@ -32,7 +32,7 @@ namespace GitLabAWSKeyRotation.Infrastructure.Persistance.Repositories
 
         public AccessToken? Get(Guid accessTokenId)
         {
-            return _dbContext.GitlabAccessTokens.Include(x => x.CodeRepositories).FirstOrDefault(x => x.Id == AccessTokenId.Create(accessTokenId));
+            return _dbContext.GitlabAccessTokens.FirstOrDefault(x => x.Id == AccessTokenId.Create(accessTokenId));
         }
         public AccessToken? GetByTokenOrName(string token, string name)
         {
@@ -41,8 +41,20 @@ namespace GitLabAWSKeyRotation.Infrastructure.Persistance.Repositories
 
         public Task<List<AccessToken>> GetAll()
         {
-            return _dbContext.GitlabAccessTokens.Include(x => x.CodeRepositories).ToListAsync();
+            return _dbContext.GitlabAccessTokens.ToListAsync();
         }
+
+        public async Task<List<CodeRepository>> GetCodeRepositories(AccessTokenId accessTokenId)
+        {
+            var result = await _dbContext.GitlabAccessTokens.Include(x => x.CodeRepositories).FirstOrDefaultAsync(x => x.Id == accessTokenId);
+            return result?.CodeRepositories.ToList() ?? new List<CodeRepository>();
+        }
+
+        public Task<List<Rotation>> GetRotations(CodeRepositoryId codeRepositoryId)
+        {
+            return _dbContext.Rotations.Where(x => x.CodeRepositoryId == codeRepositoryId).ToListAsync();
+        }
+
         public AccessToken Update(AccessToken accessToken)
         {
             _dbContext.Update(accessToken);

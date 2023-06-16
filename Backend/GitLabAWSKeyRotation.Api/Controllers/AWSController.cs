@@ -1,6 +1,7 @@
 ﻿using GitLabAWSKeyRotation.Application.AWS.Account.Commands.Register;
 using GitLabAWSKeyRotation.Application.AWS.IAM.Commands.Register;
 using GitLabAWSKeyRotation.Application.AWS.IAM.Queries;
+using GitLabAWSKeyRotation.Application.AWS.Queries;
 using GitLabAWSKeyRotation.Contracts.AWS.IAM;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -62,6 +63,19 @@ namespace GitLabAWSKeyRotation.Api.Controllers
         public async Task<IActionResult> GetIAMs([FromRoute] Guid accountId)
         {
             var command = new IAMsQuery(Domain.AWS.ValueObjects.AccountId.Create(accountId));
+            var response = await _mediator.Send(command);
+
+            // Todo map responses
+            return response.Match(
+                response => Ok(response),
+                errors => Problem(errors));
+        }
+
+        [HttpGet]
+        [Route("Accounts/{accountId}/IAMs/{iamId}/Rotations")]
+        public async Task<IActionResult> GetRotations([FromRoute] Guid accountId, [FromRoute] Guid iamId)
+        {
+            var command = new RotationsQuery(Domain.AWS.ValueObjects.IAMId.Create(iamId));
             var response = await _mediator.Send(command);
 
             // Todo map responses
