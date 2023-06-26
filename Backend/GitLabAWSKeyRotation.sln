@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitLabAWSKeyRotation.Contracts", "GitLabAWSKeyRotation.Contracts\GitLabAWSKeyRotation.Contracts.csproj", "{B8794E26-DEC3-4103-9C68-999E067C806D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitLabAWSKeyRotation.Contracts", "GitLabAWSKeyRotation.Contracts\GitLabAWSKeyRotation.Contracts.csproj", "{B8794E26-DEC3-4103-9C68-999E067C806D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitLabAWSKeyRotation.Infrastructure", "GitLabAWSKeyRotation.Infrastructure\GitLabAWSKeyRotation.Infrastructure.csproj", "{B5C45895-023A-4397-82AC-30A8A2E91E4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitLabAWSKeyRotation.Infrastructure", "GitLabAWSKeyRotation.Infrastructure\GitLabAWSKeyRotation.Infrastructure.csproj", "{B5C45895-023A-4397-82AC-30A8A2E91E4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitLabAWSKeyRotation.Application", "GitLabAWSKeyRotation.Application\GitLabAWSKeyRotation.Application.csproj", "{3CBE634C-6D65-4437-ADEC-E81B10320AB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitLabAWSKeyRotation.Application", "GitLabAWSKeyRotation.Application\GitLabAWSKeyRotation.Application.csproj", "{3CBE634C-6D65-4437-ADEC-E81B10320AB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitLabAWSKeyRotation.Domain", "GitLabAWSKeyRotation.Domain\GitLabAWSKeyRotation.Domain.csproj", "{8FF24DA0-2BF9-45C9-98E7-D6C6417C8E97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitLabAWSKeyRotation.Domain", "GitLabAWSKeyRotation.Domain\GitLabAWSKeyRotation.Domain.csproj", "{8FF24DA0-2BF9-45C9-98E7-D6C6417C8E97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitLabAWSKeyRotation.Api", "GitLabAWSKeyRotation.Api\GitLabAWSKeyRotation.Api.csproj", "{37BE5C7F-AFD3-4945-A3E5-F4F7149D96AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitLabAWSKeyRotation.Api", "GitLabAWSKeyRotation.Api\GitLabAWSKeyRotation.Api.csproj", "{37BE5C7F-AFD3-4945-A3E5-F4F7149D96AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitLabApiClient", "GitLabApiClient\GitLabApiClient.csproj", "{787876FE-2C4F-4CB5-903C-F02930C1B558}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{37BE5C7F-AFD3-4945-A3E5-F4F7149D96AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37BE5C7F-AFD3-4945-A3E5-F4F7149D96AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37BE5C7F-AFD3-4945-A3E5-F4F7149D96AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{787876FE-2C4F-4CB5-903C-F02930C1B558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{787876FE-2C4F-4CB5-903C-F02930C1B558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{787876FE-2C4F-4CB5-903C-F02930C1B558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{787876FE-2C4F-4CB5-903C-F02930C1B558}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
