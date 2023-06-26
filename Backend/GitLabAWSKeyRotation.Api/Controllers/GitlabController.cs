@@ -98,7 +98,7 @@ namespace GitLabAWSKeyRotation.Api.Controllers
         }
 
         [HttpGet]
-        [Route("AccessToken/{accessTokenId}/CodeRepositories/{codeRepositoryId}")]
+        [Route("AccessToken/{accessTokenId}/CodeRepository/{codeRepositoryId}/Rotations")]
         public async Task<IActionResult> GetRotations([FromRoute] Guid accessTokenId, [FromRoute] Guid codeRepositoryId)
         {
             var command = new RotationsQuery(CodeRepositoryId.Create(codeRepositoryId));

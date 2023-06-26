@@ -72,7 +72,7 @@ namespace GitLabAWSKeyRotation.Api.Controllers
         }
 
         [HttpGet]
-        [Route("Accounts/{accountId}/IAMs/{iamId}/Rotations")]
+        [Route("Account/{accountId}/IAM/{iamId}/Rotations")]
         public async Task<IActionResult> GetRotations([FromRoute] Guid accountId, [FromRoute] Guid iamId)
         {
             var command = new RotationsQuery(Domain.AWS.ValueObjects.IAMId.Create(iamId));
