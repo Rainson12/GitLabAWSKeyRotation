@@ -34,7 +34,7 @@ namespace GitLabAWSKeyRotation.Application.ScheduledJobs
                         var keys = await iamClient.ListAccessKeysAsync(new ListAccessKeysRequest { UserName = iam.Name });
 
                         var currentKey = keys.AccessKeyMetadata.First(x => x.AccessKeyId == iam.AccessKeyId);
-                        if (iam.KeyRotationInDays == 0 && currentKey.CreateDate < DateTime.Now.Subtract(new TimeSpan(0, Convert.ToInt32(iam.KeyRotationInDays * 24 * 60), 0))) // is key outdated
+                        if (iam.KeyRotationInDays != 0 && currentKey.CreateDate < DateTime.Now.Subtract(new TimeSpan(0, Convert.ToInt32(iam.KeyRotationInDays * 24 * 60), 0))) // is key outdated
                         {
                             var newKey = await iamClient.CreateAccessKeyAsync(new CreateAccessKeyRequest { UserName = iam.Name });
                             await iamClient.DeleteAccessKeyAsync(new() { AccessKeyId = iam.AccessKeyId, UserName = iam.Name });
