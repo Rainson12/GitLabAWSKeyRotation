@@ -72,32 +72,31 @@ namespace GitLabAWSKeyRotation.Application.Gitlab.Commands.RegisterRotation
                             var awsCredentials = new Amazon.Runtime.BasicAWSCredentials(accessKeyId.Value, accessSecret.Value);
                             var stsClient = new Amazon.SecurityToken.AmazonSecurityTokenServiceClient(awsCredentials);
                             var callerIdRequest = new GetCallerIdentityRequest();
-                            var result = await stsClient.GetCallerIdentityAsync(callerIdRequest);
+                            var result = await stsClient.GetCallerIdentityAsync(callerIdRequest); // validate iam credentials are correct
                             var iamArn = result.Arn;
                             var accountId = result.Account;
                             var iamUserName = iamArn.Split("/").Last();
 
-                            if(accessToken.CodeRepositories.FirstOrDefault(x => x.Url == matchedProject.Project.WebUrl) is not CodeRepository codeRepo)
+                            if(accessToken.CodeRepositories.FirstOrDefault(x => x.Url == matchedProject.Project.WebUrl) is not CodeRepository codeRepo) // get repo, otherwise register it
                             {
                                 codeRepo = CodeRepository.Create(matchedProject.Project.WebUrl, matchedProject.Project.Name);
                                 accessToken.AddCodeRepository(codeRepo);
                             }
-                            if(_accountsRepository.Get(accountId) is not Account account)
+                            if(_accountsRepository.Get(accountId) is not Account account) // get aws account, otherwise register it
                             {
                                 account = Account.Create(accountId, accountId);
                                 _accountsRepository.Add(account);
                             }
-                            if(account.IamIdentities.FirstOrDefault(x => x.AccessKeyId ==  accessKeyId.Value) is not IAM iam) {
+                            if(account.IamIdentities.FirstOrDefault(x => x.AccessKeyId ==  accessKeyId.Value) is not IAM iam) { // get iam, otherwise register it
                                 iam = IAM.Create(iamArn, iamUserName, accessKeyId.Value, accessSecret.Value, command.rotationIntervalInDays);
                                 account.AddIdentity(iam);
                             }
-                            if(iam.Rotations.FirstOrDefault(x => x.Environment == envName && x.AccessKeyIdVariableName == accessKeyId.Key && x.AccessSecretVariableName == accessSecret.Key) is not Rotation rotation)
+                            if(iam.Rotations.FirstOrDefault(x => x.CodeRepositoryId == codeRepo.Id && x.Environment == envName && x.AccessKeyIdVariableName == accessKeyId.Key && x.AccessSecretVariableName == accessSecret.Key) is not Rotation rotation) // get rotation, otherwise register it
                             {
                                 rotation = Rotation.Create(envName, accessKeyId.Key, accessSecret.Key, codeRepo.Id);
                                 iam.AddRotation(rotation);
                             }
                             _accountsRepository.Update(account);
-                            //iam = IAM.Create(iamArn, )
                         }
                         catch
                         {

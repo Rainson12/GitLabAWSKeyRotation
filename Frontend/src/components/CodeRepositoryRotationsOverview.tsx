@@ -7,14 +7,14 @@ import BackendApi from '../services/Api';
 import { useApplicationStore } from '../stores/Application';
 import { guid } from '../Models/Common/Guid';
 
-function RotationsOverview() {
+function CodeRepositoryRotationsOverview() {
     const columns = [
-        {
-            field: 'codeRepositoryName',
-            headerName: 'Code Repository Name',
-            valueGetter: (value: any) => value.row.codeRepositoryId?.value && codeRepositories.find((x: any) => x.id.value === value.row.codeRepositoryId.value)?.name,
-            flex: 1,
-        },
+        // {
+        //     field: 'codeRepositoryName',
+        //     headerName: 'Code Repository Name',
+        //     valueGetter: (value: any) => value.row.codeRepositoryId?.value && codeRepositories!.find((x: any) => x.id.value === value.row.codeRepositoryId.value)?.name,
+        //     flex: 1,
+        // },
         {
             field: 'environment',
             headerName: 'Environment',
@@ -36,8 +36,7 @@ function RotationsOverview() {
         mouseX: number;
         mouseY: number;
     } | null>(null);
-    const codeRepositories = useApplicationStore((state) => state.computed.codeRepositories);
-    const selectedIam = useApplicationStore((state) => state.selectedIAM);
+    const codeRepositoryRotations = useApplicationStore((state) => state.codeRepositoryRotations);
 
     const handleContextMenu = (event: React.MouseEvent) => {
         event.preventDefault();
@@ -61,7 +60,7 @@ function RotationsOverview() {
 
     return (
         <Box sx={{ mt: 1 }}>
-            {selectedIam != undefined && (
+            {codeRepositoryRotations != undefined && (
                 <>
                     <Typography variant="h6" gutterBottom>
                         Rotations
@@ -78,7 +77,7 @@ function RotationsOverview() {
                                 },
                             }}
                             columns={columns}
-                            rows={selectedIam.rotations}
+                            rows={codeRepositoryRotations}
                             getRowId={(row) => row.id.value}
                             slotProps={{
                                 row: {
@@ -111,4 +110,4 @@ function RotationsOverview() {
     );
 }
 
-export default RotationsOverview;
+export default CodeRepositoryRotationsOverview;

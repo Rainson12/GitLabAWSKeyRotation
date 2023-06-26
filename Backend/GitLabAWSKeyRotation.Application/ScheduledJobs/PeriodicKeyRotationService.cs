@@ -20,8 +20,10 @@ namespace GitLabAWSKeyRotation.Application.ScheduledJobs
 
         public async Task DoWork()
         {
-            var accounts = await _accountsRepository.GetAll();
-            var accessTokens = await _accessTokenRepository.GetAll();
+            var accounts = await _accountsRepository.GetAllWithAllSubProperties();
+            var accessTokens = await _accessTokenRepository.GetAllWithAllSubProperties();
+            var repos = accessTokens.SelectMany(x => x.CodeRepositories, (accessToken, CodeRepository) => new { accessToken.Token, CodeRepository }).ToList();
+
             foreach (var account in accounts)
             {
                 foreach (var iam in account.IamIdentities)
@@ -39,18 +41,23 @@ namespace GitLabAWSKeyRotation.Application.ScheduledJobs
 
                             iam.UpdateKey(newKey.AccessKey.AccessKeyId, newKey.AccessKey.SecretAccessKey);
                             _accountsRepository.Update(account);
+
+                            // update all gitlab variables
                             foreach (var rotation in iam.Rotations)
                             {
-                                var codeRepo = accessTokens.Select(x => new { Token = x.Token, Repo = x.CodeRepositories.FirstOrDefault(y => y.Id == rotation.CodeRepositoryId) });
+                                var codeRepoWithAccessToken = repos.FirstOrDefault(x => x.CodeRepository.Id == rotation.CodeRepositoryId);
+                                
+                                if (codeRepoWithAccessToken == null)
+                                    continue;
+                                
+                                Uri gitlabRepoWebUrl = new Uri(codeRepoWithAccessToken.CodeRepository.Url);
+                                var gitlabRootUrl = gitlabRepoWebUrl.GetLeftPart(UriPartial.Authority);
+                                var gitlabClient = new GitLabClient(gitlabRootUrl, codeRepoWithAccessToken.Token);
+                                var allProjects = await gitlabClient.Projects.GetAsync();
+                                var project = allProjects.Single(x => x.WebUrl == codeRepoWithAccessToken.CodeRepository.Url);
 
-                                //Uri gitlabRepoWebUrl = new Uri(codeRepo.Repo.Url);
-                                //var gitlabRootUrl = gitlabRepoWebUrl.GetLeftPart(UriPartial.Authority);
-                                //var gitlabClient = new GitLabClient(gitlabRootUrl, codeRepo.Token);
-                                //var allProjects = await gitlabClient.Projects.GetAsync();
-                                //var project = allProjects.Single(x => x.WebUrl == codeRepo.Repo.Url);
-
-                                //await gitlabClient.Projects.UpdateVariableAsync(project.Id, new() { Key = rotation.AccessKeyIdVariableName, EnvironmentScope = rotation.Environment, Value = newKey.AccessKey.AccessKeyId });
-                                //await gitlabClient.Projects.UpdateVariableAsync(project.Id, new() { Key = rotation.AccessSecretVariableName, EnvironmentScope = rotation.Environment, Value = newKey.AccessKey.SecretAccessKey });
+                                await gitlabClient.Projects.UpdateVariableAsync(project.Id, new() { Key = rotation.AccessKeyIdVariableName, EnvironmentScope = rotation.Environment, Value = newKey.AccessKey.AccessKeyId });
+                                await gitlabClient.Projects.UpdateVariableAsync(project.Id, new() { Key = rotation.AccessSecretVariableName, EnvironmentScope = rotation.Environment, Value = newKey.AccessKey.SecretAccessKey });
                             }
                         }
                     }

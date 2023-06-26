@@ -26,12 +26,12 @@ function IamIdentityOverview() {
     } | null>(null);
     const setSelectedIam = useApplicationStore((state) => state.setSelectedIAM);
     const selectedIam = useApplicationStore((state) => state.selectedIAM);
-    const selectedAccount = useApplicationStore((state) => state.selectedAccount);
+    const iams = useApplicationStore((state) => state.iams);
 
     const handleContextMenu = (event: React.MouseEvent) => {
         event.preventDefault();
         const iamIdGuid = guid(event.currentTarget.getAttribute('data-id')?.toString() ?? '');
-        const iam = selectedAccount.iamIdentities.find((i: any) => i.id.value == iamIdGuid);
+        const iam = iams!.find((i: any) => i.id.value == iamIdGuid);
         setSelectedIam(iam);
         setContextMenu(contextMenu === null ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 } : null);
     };
@@ -55,14 +55,14 @@ function IamIdentityOverview() {
             setSelectedIam(undefined);
         } else {
             const iamIdGuid = guid(newSelection[0] as string);
-            const iam = selectedAccount.iamIdentities.find((i: any) => i.id.value == iamIdGuid);
+            const iam = iams!.find((i: any) => i.id.value == iamIdGuid);
             setSelectedIam(iam);
         }
     };
 
     return (
         <Box sx={{ mt: 1 }}>
-            {selectedAccount != undefined && (
+            {iams != undefined && (
                 <>
                     <Typography variant="h6" gutterBottom>
                         IAM Identities
@@ -80,7 +80,7 @@ function IamIdentityOverview() {
                                 },
                             }}
                             columns={columns}
-                            rows={selectedAccount.iamIdentities}
+                            rows={iams}
                             onRowSelectionModelChange={onRowSelectionModelChange}
                             getRowId={(row) => row.id.value}
                             slotProps={{

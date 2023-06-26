@@ -14,5 +14,6 @@ namespace GitLabAWSKeyRotation.Application.Common.Interfaces.Persistance
         Task<List<Rotation>> GetRotations(CodeRepositoryId codeRepositoryId);
         AccessToken Update(AccessToken accessToken);
         void Add(AccessToken accessToken);
+        Task<List<AccessToken>> GetAllWithAllSubProperties();
     }
 }

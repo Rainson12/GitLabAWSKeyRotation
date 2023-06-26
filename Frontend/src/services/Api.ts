@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useApplicationStore } from '../stores/Application';
+import { Guid } from '../Models/Common/Guid';
 
 let instance: Api;
 
@@ -26,6 +27,25 @@ class Api {
         const response = await axios.get(`${this.BASE_URL}/Gitlab/AccessTokens`);
         return response.data;
     }
+    async GetCodeRepositories(accessToken: Guid): Promise<Array<any>> {
+        const response = await axios.get(`${this.BASE_URL}/Gitlab/AccessToken/${accessToken}/CodeRepositories`);
+        return response.data;
+    }
+
+    async GetRotationsFromCodeRepository(accessTokenId: Guid, codeRepositoryId: Guid): Promise<Array<any>> {
+        const response = await axios.get(`${this.BASE_URL}/Gitlab/AccessToken/${accessTokenId}/CodeRepository/${codeRepositoryId}/Rotations`);
+        return response.data;
+    }
+
+    async GetIAMs(accountId: Guid): Promise<Array<any>> {
+        const response = await axios.get(`${this.BASE_URL}/AWS/Accounts/${accountId}/IAMs`);
+        return response.data;
+    }
+    async GetRotationsFromIAM(accountId: Guid, iamId: Guid): Promise<Array<any>> {
+        const response = await axios.get(`${this.BASE_URL}/AWS/Account/${accountId}/IAM/${iamId}/Rotations`);
+        return response.data;
+    }
+
     async AddGitlabAccessToken(name: string, token: string): Promise<Array<any>> {
         const response = await axios.post(`${this.BASE_URL}/Gitlab/AccessToken/Register`, {
             name: name,

@@ -4,36 +4,43 @@ import Box, { BoxProps } from '@mui/material/Box';
 import React from 'react';
 import { Container, Menu, MenuItem, Typography } from '@mui/material';
 import BackendApi from '../services/Api';
-import { guid } from '../Models/Common/Guid';
 import { useApplicationStore } from '../stores/Application';
+import { guid } from '../Models/Common/Guid';
 
-const columns = [
-    {
-        field: 'name',
-        headerName: 'Name',
-        flex: 1,
-    },
-    {
-        field: 'url',
-        headerName: 'Url',
-        flex: 1,
-    },
-];
-function CodeRepositoryOverview() {
+function IAMRotationsOverview() {
+    const columns = [
+        // {
+        //     field: 'codeRepositoryName',
+        //     headerName: 'Code Repository Name',
+        //     valueGetter: (value: any) => value.row.codeRepositoryId?.value && codeRepositories!.find((x: any) => x.id.value === value.row.codeRepositoryId.value)?.name,
+        //     flex: 1,
+        // },
+        {
+            field: 'environment',
+            headerName: 'Environment',
+            flex: 1,
+        },
+        {
+            field: 'accessKeyIdVariableName',
+            headerName: 'Access Key Id Variable Name',
+            flex: 1,
+        },
+        {
+            field: 'accessSecretVariableName',
+            headerName: 'Access Secret Variable Name',
+            flex: 1,
+        },
+    ];
+
     const [contextMenu, setContextMenu] = React.useState<{
         mouseX: number;
         mouseY: number;
     } | null>(null);
-
-    const codeRepositories = useApplicationStore((state) => state.codeRepositories);
-    const selectedCodeRepository = useApplicationStore((state) => state.selectedCodeRepository);
-    const setCodeRepository = useApplicationStore((state) => state.setSelectedCodeRepository);
+    const iamRotations = useApplicationStore((state) => state.iamRotations);
 
     const handleContextMenu = (event: React.MouseEvent) => {
         event.preventDefault();
-        const codeRepositoryIdGuid = guid(event.currentTarget.getAttribute('data-id')?.toString() ?? '');
-        const codeRepository = codeRepositories?.find((x: any) => x.id.value == codeRepositoryIdGuid);
-        setCodeRepository(codeRepository);
+        // setSelectedRow(Number(event.currentTarget.getAttribute('data-id')));
         setContextMenu(contextMenu === null ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 } : null);
     };
 
@@ -41,36 +48,25 @@ function CodeRepositoryOverview() {
         setContextMenu(null);
     };
 
-    const editItem = () => {
-        console.log('edit selected:' + selectedCodeRepository);
-        handleClose();
-    };
+    // const editItem = () => {
+    //     console.log('edit selected:' + selectedAccount)
+    //     handleClose();
+    // };
 
-    const deleteItem = () => {
-        console.log('delete selected:' + selectedCodeRepository);
-        handleClose();
-    };
-
-    const onRowSelectionModelChange = (newSelection: any) => {
-        if (newSelection.length == 0) {
-            setCodeRepository(undefined);
-        } else {
-            const codeRepositoryIdGuid = guid(newSelection[0] as string);
-            const codeRepository = codeRepositories?.find((x: any) => x.id.value == codeRepositoryIdGuid);
-            setCodeRepository(codeRepository);
-        }
-    };
+    // const deleteItem = () => {
+    //     console.log('delete selected:' + selectedAccount)
+    //     handleClose();
+    // };
 
     return (
         <Box sx={{ mt: 1 }}>
-            {codeRepositories != undefined && (
+            {iamRotations != undefined && (
                 <>
                     <Typography variant="h6" gutterBottom>
-                        Code Repositories
+                        Rotations
                     </Typography>
                     <Box>
                         <DataGrid
-                            rowSelectionModel={selectedCodeRepository ? [selectedCodeRepository.id.value.toString()] : []}
                             autoHeight
                             sx={{
                                 '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
@@ -81,8 +77,7 @@ function CodeRepositoryOverview() {
                                 },
                             }}
                             columns={columns}
-                            rows={codeRepositories}
-                            onRowSelectionModelChange={onRowSelectionModelChange}
+                            rows={iamRotations}
                             getRowId={(row) => row.id.value}
                             slotProps={{
                                 row: {
@@ -105,8 +100,8 @@ function CodeRepositoryOverview() {
                                 },
                             }}
                         >
-                            <MenuItem onClick={editItem}>Edit</MenuItem>
-                            <MenuItem onClick={deleteItem}>Delete</MenuItem>
+                            <MenuItem>Edit</MenuItem>
+                            <MenuItem>Delete</MenuItem>
                         </Menu>
                     </Box>
                 </>
@@ -115,4 +110,4 @@ function CodeRepositoryOverview() {
     );
 }
 
-export default CodeRepositoryOverview;
+export default IAMRotationsOverview;

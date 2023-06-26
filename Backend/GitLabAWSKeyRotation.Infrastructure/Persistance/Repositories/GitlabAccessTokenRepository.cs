@@ -61,5 +61,10 @@ namespace GitLabAWSKeyRotation.Infrastructure.Persistance.Repositories
             _dbContext.SaveChanges();
             return accessToken;
         }
+
+        public Task<List<AccessToken>> GetAllWithAllSubProperties()
+        {
+            return _dbContext.GitlabAccessTokens.Include(x => x.CodeRepositories).ToListAsync();
+        }
     }
 }

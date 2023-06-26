@@ -15,5 +15,6 @@ namespace GitLabAWSKeyRotation.Application.Common.Interfaces.Persistance
         Account? GetByUuid(Guid id);
         Account Update(Account account);
         void Add(Account account);
+        Task<List<Account>> GetAllWithAllSubProperties();
     }
 }
